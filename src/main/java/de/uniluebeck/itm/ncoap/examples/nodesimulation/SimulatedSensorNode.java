@@ -1,5 +1,6 @@
 package de.uniluebeck.itm.ncoap.examples.nodesimulation;
 
+import de.uniluebeck.itm.ncoap.application.client.CoapClientApplication;
 import de.uniluebeck.itm.ncoap.application.server.CoapServerApplication;
 import de.uniluebeck.itm.ncoap.application.server.webservice.WebService;
 import org.apache.log4j.*;
@@ -28,26 +29,26 @@ public class SimulatedSensorNode {
         Logger.getLogger("de.uniluebeck.itm.ncoap.examples.nodesimulation").setLevel(Level.DEBUG);
     }
 
-    private InetSocketAddress socketAddress;
     private CoapServerApplication coapServerApplication;
 
 
     public SimulatedSensorNode(InetSocketAddress socketAddress) throws SocketException {
-        this.socketAddress = socketAddress;
         coapServerApplication = new CoapServerApplication(socketAddress);
     }
+
 
     public void addWebservice(WebService webservice){
         coapServerApplication.registerService(webservice);
     }
+
 
     public static void main(String[] args) throws Exception {
         InetAddress inetAddress = InetAddress.getByName(args[0]);
 
         SimulatedSensorNode sensorNode = new SimulatedSensorNode(new InetSocketAddress(inetAddress, 5683));
 
-        SimulatedTemperatureService service = new SimulatedTemperatureService(inetAddress, "/temperature", 5);
-
-        sensorNode.addWebservice(service);
+        sensorNode.addWebservice(new SimulatedTemperatureService(inetAddress, "/temperature-1", 5));
+        sensorNode.addWebservice(new SimulatedTemperatureService(inetAddress, "/temperature-2", 6));
+        sensorNode.addWebservice(new SimulatedTemperatureService(inetAddress, "/temperature-3", 7));
     }
 }
